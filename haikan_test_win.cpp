@@ -344,11 +344,12 @@ int main(int argc, char **argv) {
 			if ('\\' == *iter || '\/' == *iter)
 				*iter = delim;
 		}
-		string video_name = save_folder.substr(save_folder.find_last_of(delim)+1);
-		save_folder = save_folder.substr(0, save_folder.find_last_of(delim));
-		save_folder = save_folder.substr(0, save_folder.find_last_of(delim));
-		save_folder = save_folder + delim + save_folder_name + delim + video_name + delim;
-		cout << "Save folder: " << save_folder << endl;
+    save_folder += delim;
+		//string video_name = save_folder.substr(save_folder.find_last_of(delim)+1);
+		//save_folder = save_folder.substr(0, save_folder.find_last_of(delim));
+		//save_folder = save_folder.substr(0, save_folder.find_last_of(delim));
+		//save_folder = save_folder + delim + save_folder_name + delim + video_name + delim;
+		//cout << "Save folder: " << save_folder << endl;
 		MakeSureDirectoryPathExists(save_folder.c_str());
 
 		Mat frame, frame_clone;
