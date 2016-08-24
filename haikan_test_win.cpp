@@ -294,7 +294,8 @@ int main(int argc, char **argv) {
 	int num_previous_frames_for_tracking = 3; // Number of previous frames to be check for face tracking.
 	float iou_previous_rect_for_tracking = 0.75; // IOU threshold to recognize same faces of two frames. 
 	float iou_multi_faces = 0.3; // IOU threshold for multi faces appear in the same image.
-	string save_folder_name("libfd_face_image"); // Folder to save detect face images.
+	string save_folder_name("faces_detected"); // Folder to save detect face images.
+	//string save_folder_name("libfd_face_image"); // Folder to save detect face images.
 	char delim = '\\'; // Windows path style.
 
     //cout<<"Using OpenCV version " << CV_VERSION << std::endl;
@@ -344,7 +345,7 @@ int main(int argc, char **argv) {
 			if ('\\' == *iter || '\/' == *iter)
 				*iter = delim;
 		}
-    save_folder += delim;
+		save_folder += delim;
 		//string video_name = save_folder.substr(save_folder.find_last_of(delim)+1);
 		//save_folder = save_folder.substr(0, save_folder.find_last_of(delim));
 		//save_folder = save_folder.substr(0, save_folder.find_last_of(delim));
@@ -422,10 +423,13 @@ int main(int argc, char **argv) {
 					iter != previous_rects.end(); iter++) {
 					for (int j = 0; j < iter->size(); j++) {
 						float iou = IOU(detect_face_rect, iter->at(j));
+						//cout << "IOU with previous #" << j << ": " << iou << endl;
+						//cout << "vector size: " << previous_rects.size()
+						//	<< ", queue size: " << iter->size() << endl;
 						if (iou > iou_previous_rect_for_tracking) {
 							is_dup = true;
 							// Substitue empty rect in the end of the queue to the detect face rect.
-							iter->at(j) = detect_face_rect;
+							(*iter)[iter->size()-1] = detect_face_rect;
 							break;
 						}
 					}
@@ -454,9 +458,12 @@ int main(int argc, char **argv) {
 				// Track across at most "num_previous_frames_for_tracking" frames.
 				if (iter->size() > num_previous_frames_for_tracking)
 					iter->pop_front();
+				//cout << "222 vector size: " << previous_rects.size()
+				//	<< ", queue size: " << iter->size() << endl;
 				// Delete lost face (all rect are empty in the queue).
 				bool valid = false;
 				for (deque<Rect>::iterator it = iter->begin(); it != iter->end(); it++) {
+					//cout << *it << endl;
 					if (it->area() > 0) {
 						valid = true;
 						break;
